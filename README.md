@@ -89,7 +89,7 @@ var config = {
 In order to render a chart to an image Buffer, call `renderBuffer`. By default the PNG format is used.
 
 ```javascript
-renderer.renderBuffer(defaultChartConfig, function (err, buffer) {
+renderer.renderBuffer(config, function (err, buffer) {
     if (err) throw err;
 
     // the `buffer` now contains a Buffer with the rendered PNG
@@ -102,7 +102,7 @@ renderer.renderBuffer(defaultChartConfig, function (err, buffer) {
 You can also render to a [Data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) using `renderDataUrl`.
 
 ```javascript
-renderer.renderDataUrl(defaultChartConfig, function (err, dataUrl) {
+renderer.renderDataUrl(config, function (err, dataUrl) {
     if (err) throw err;
 
     // the `dataUrl` now contains a data url for the rendered PNG
