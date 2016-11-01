@@ -1,0 +1,31 @@
+{
+  "name": "phantom-chartjs",
+  "version": "0.0.1",
+  "description": "Server-side chart generation using PhantomJS and Chart.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha index.tests.js"
+  },
+  "author": {
+    "name": "Artifact Health, Inc",
+    "url": "http://www.artifacthealth.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/artifacthealth/phantom-chartjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "phantomjs-prebuilt": "^2.1.13",
+    "restify-clients": "^1.4.1"
+  },
+  "peerDependencies": {
+    "chart.js": "^2.3.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chart.js": "^2.3.0",
+    "image-size": "^0.5.0",
+    "mocha": "^3.1.2"
+  }
+}
