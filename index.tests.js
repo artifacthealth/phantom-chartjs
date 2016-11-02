@@ -46,36 +46,7 @@ var defaultOptions = {
     logger: console
 };
 
-describe("createChartRenderer", function() {
-    this.timeout(5000);
-
-    it("should return an error if Chart.js cannot be found", function(done) {
-
-        createChartRenderer({ chartJsPath: "foo" }, function(err) {
-
-            assert.ok(err);
-            assert.include(err.message, "Could not find Chart.js at path 'foo'");
-            done();
-        });
-    });
-
-    it("should return an error if the port is not available", function(done) {
-
-        createChartRenderer(defaultOptions, function(err, renderer) {
-            if (err) return done(err);
-
-            createChartRenderer(defaultOptions, function(err) {
-
-                assert.ok(err);
-                assert.include(err.message, "Unable to start PhantomJS server on port");
-
-                renderer.close(done);
-            });
-        });
-    });
-});
-
-describe.only("ChartRenderer", function() {
+describe("ChartRenderer", function() {
     this.timeout(5000);
 
     var renderer;
@@ -179,6 +150,35 @@ describe.only("ChartRenderer", function() {
                 done();
             });
         }
+    });
+});
+
+describe("createChartRenderer", function() {
+    this.timeout(5000);
+
+    it("should return an error if Chart.js cannot be found", function(done) {
+
+        createChartRenderer({ chartJsPath: "foo" }, function(err) {
+
+            assert.ok(err);
+            assert.include(err.message, "Could not find Chart.js at path 'foo'");
+            done();
+        });
+    });
+
+    it("should return an error if the port is not available", function(done) {
+
+        createChartRenderer(defaultOptions, function(err, renderer) {
+            if (err) return done(err);
+
+            createChartRenderer(defaultOptions, function(err) {
+
+                assert.ok(err);
+                assert.include(err.message, "Unable to start PhantomJS server on port");
+
+                renderer.close(done);
+            });
+        });
     });
 });
 

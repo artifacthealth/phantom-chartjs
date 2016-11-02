@@ -75,7 +75,7 @@ createChartRenderer(null, function(err, renderer) {
                 });
             });
         },
-        function (err, n) {
+        function () {
             process.exit(0);
         }
     );
