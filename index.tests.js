@@ -42,7 +42,8 @@ var defaultChartConfig = {
 };
 
 var defaultOptions = {
-    chartJsPath: "./node_modules/chart.js/dist/Chart.min.js"
+    chartJsPath: "./node_modules/chart.js/dist/Chart.min.js",
+    logger: console
 };
 
 describe("createChartRenderer", function() {

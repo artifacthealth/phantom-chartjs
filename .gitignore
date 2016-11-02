@@ -1,2 +1,4 @@
 /.idea
+/examples/output
+/examples/node_modules
 /node_modules

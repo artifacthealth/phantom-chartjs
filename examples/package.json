@@ -1,0 +1,13 @@
+{
+  "name": "examples",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Examples for phantom-chartjs",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.1.2",
+    "chart.js": "^2.3.0",
+    "mkdir-p": "0.0.7",
+    "phantom-chartjs": "^0.1.0"
+  }
+}
