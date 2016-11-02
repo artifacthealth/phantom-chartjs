@@ -71,7 +71,7 @@ createChartRenderer(null, function(err, renderer) {
                     if (err) throw err;
 
                     console.log("Rendered " + outFile + " in " + end + "ms");
-                    setTimeout(callback, 100);
+                    callback();
                 });
             });
         },

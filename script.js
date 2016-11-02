@@ -8,7 +8,7 @@ var fs = require("fs");
 
 phantom.onError = function (msg, trace) {
 
-    console.error("Unhandled error: " + createErrorMessage(msg, trace));
+    console.log("Unhandled error: " + createErrorMessage(msg, trace));
     phantom.exit(1);
 };
 
@@ -77,49 +77,19 @@ function send(response, data, statusCode) {
 
 function render(configText, callback) {
 
-    var page = webpage.create(),
-        called = false;
-
-    page.onError = function (msg, trace) {
-
-        if (!called) {
-            called = true;
-            callback(createErrorMessage(msg, trace));
-        }
-    };
-
-    // Chart.js must be installed as a peer dependency.
-    page.injectJs(chartJsPath);
-
-    var data = page.evaluate(renderPage, configText);
-    page.close();
-
-    if (!called) {
-        called = true;
-
-        if (data) {
-            //splitDataUrl(data, callback);
-            callback(null, data);
-        }
-        else {
-            callback("Unable to parse chart configuration.");
-        }
-    }
-}
-
-function renderPage(configText) {
-
     // parse json
     try {
         var config = JSON.parse(configText);
     }
     catch (e) {
-        return null;
+        callback("Unable to parse chart configuration: " + e.message);
+        return;
     }
 
     // make sure we have a chart object.
     if (!config.chart) {
-        return null;
+        callback("Missing chart configuration.");
+        return;
     }
 
     // make sure we have an options object.
@@ -137,18 +107,69 @@ function renderPage(configText) {
     // get the height if specified. if height is not specified, calculate using aspect ratio.
     var height = config.height || (width / (config.chart.options.aspectRatio || 2));
 
+    // get the scale
+    var scale = config.scale || 1;
+
+    var page = webpage.create(),
+        called = false;
+
+    page.onError = function (msg, trace) {
+
+        if (!called) {
+            called = true;
+            callback(createErrorMessage(msg, trace));
+        }
+    };
+
+    // Chart.js must be installed as a peer dependency.
+    page.injectJs(chartJsPath);
+
+    // set the viewport size to define the render area
+    page.viewportSize = {
+        width: width * scale,
+        height: height * scale
+    };
+
+    page.evaluate(renderPage, config.chart, width, height, scale);
+    var data = page.renderBase64(config.type || "PNG");
+    page.close();
+
+    if (!called) {
+        called = true;
+        callback(null, data);
+    }
+}
+
+function renderPage(chart, width, height, scale) {
+
+    // clear body margin so canvas is positioned at upper left
+    document.body.style.margin = "0";
+
     // create the canvas
     var canvas = document.createElement("canvas");
-    canvas.setAttribute("width", width);
-    canvas.setAttribute("height", height);
+
+    if (scale == 1) {
+        canvas.setAttribute("width", width);
+        canvas.setAttribute("height", height);
+    }
+    else {
+        canvas.setAttribute("width", width * scale);
+        canvas.setAttribute("height", height * scale);
+        canvas.getContext("2d").setTransform(scale, 0, 0, scale, 0, 0);
+
+        // monkey patch the Chart Controller to reset the calculated height and width so chart renders correctly on the scaled canvas.
+        var _super = Chart.Controller.prototype.initialize;
+        Chart.Controller.prototype.initialize = function() {
+
+            this.chart.width = width;
+            this.chart.height = height;
+            return _super.call(this);
+        }
+    }
 
     document.body.appendChild(canvas);
 
-    var chart = new Chart(canvas, config.chart);
-    var data = canvas.toDataURL(config.type || "png", config.quality);
-    chart.destroy();
-
-    return data;
+    new Chart(canvas, chart);
 }
 
 function createErrorMessage(msg, trace) {

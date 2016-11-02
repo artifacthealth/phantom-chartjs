@@ -42,7 +42,6 @@ var defaultChartConfig = {
 };
 
 var defaultOptions = {
-    chartJsPath: "./node_modules/chart.js/dist/Chart.min.js",
     logger: console
 };
 
@@ -71,14 +70,27 @@ describe("ChartRenderer", function() {
         }
     });
 
-    describe("#renderDataUrl", function() {
+    describe("#renderBase64", function() {
 
         it("should return a data url for the specified chart", function(done) {
 
-            renderer.renderDataUrl(defaultChartConfig, function (err, result) {
+            renderer.renderBase64(defaultChartConfig, function (err, result) {
                 if (err) return done(err);
 
-                assert.include(result, "base64");
+                assert.isTrue(typeof result === "string");
+                done();
+            });
+        });
+
+        it("should return an error of the image type is not supported", function(done) {
+
+            var config = cloneDefaultConfig();
+            config.type = "foo";
+
+            renderer.renderBase64(config, function (err) {
+
+                assert.ok(err);
+                assert.include(err.message, "Unsupported image type 'foo'.");
                 done();
             });
         });
@@ -127,7 +139,7 @@ describe("ChartRenderer", function() {
         it("should return a jpeg if specified", function(done) {
 
             var config = cloneDefaultConfig();
-            config.type = "image/jpeg";
+            config.type = "JPEG";
 
             renderer.renderBuffer(config, function (err, result) {
                 if (err) return done(err);
@@ -155,16 +167,6 @@ describe("ChartRenderer", function() {
 
 describe("createChartRenderer", function() {
     this.timeout(5000);
-
-    it("should return an error if Chart.js cannot be found", function(done) {
-
-        createChartRenderer({ chartJsPath: "foo" }, function(err) {
-
-            assert.ok(err);
-            assert.include(err.message, "Could not find Chart.js at path 'foo'");
-            done();
-        });
-    });
 
     it("should return an error if the port is not available", function(done) {
 

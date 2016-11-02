@@ -5,8 +5,10 @@ var childProcess = require("child_process");
 var phantomjs = require("phantomjs-prebuilt");
 var restify = require("restify-clients");
 var fs = require("fs");
+var async = require("async");
 
 var scriptPath = path.join(__dirname, "script.js"),
+    chartJsPath = path.resolve(path.dirname(require.resolve("chart.js")), "../dist/Chart.min.js");
     binPath = phantomjs.path;
 
 function ChartRenderer(options) {
@@ -18,41 +20,50 @@ function ChartRenderer(options) {
 
     this.logger = options.logger;
     this.port = options.port || 8083;
-    this.chartJsPath = options.chartJsPath || path.resolve(__dirname, "../chart.js/dist/Chart.min.js");
+
+    // the PhantomJS server is single threaded and rendering (in our case) seems to happening synchronously. so let's queue up requests
+    // here instead of on the server. the server seems to perform better this way and let's us keep track of any outstanding requests.
+    var self = this;
+    this._queue = async.queue(function(request, done) { self._request.post("/", request, done) }, 1);
 }
 
 inherits(ChartRenderer, EventEmitter);
 
-ChartRenderer.prototype.renderDataUrl = function (chart, callback) {
+ChartRenderer.prototype.renderBase64 = function (config, callback) {
+
+    if (config == null) {
+        throw new Error("Missing required argument 'config'.");
+    }
+
+    if (callback == null) {
+        throw new Error("Missing required argument 'callback'.");
+    }
 
     if (this._closing || this._closed) {
         return callback(new Error("Renderer is closed."));
     }
 
-    this._request.post("/", safeStringify(chart), function (err, req, res) {
+    if (config.chart == null) {
+        return callback(new Error("Missing chart configuration."));
+    }
+
+    if (config.type && (config.type != "PNG" && config.type != "JPEG" && config.type != "GIF")) {
+        return callback(new Error("Unsupported image type '" + config.type + "'. Supported types are PNG, GIF, and JPEG."));
+    }
+
+    this._queue.push(safeStringify(config), function(err, req, res) {
         if (err) return callback(err);
 
         callback(null, res.body);
     });
 };
 
-ChartRenderer.prototype.renderBuffer = function (chart, callback) {
+ChartRenderer.prototype.renderBuffer = function (config, callback) {
 
-    this.renderDataUrl(chart, function (err, data) {
+    this.renderBase64(config, function (err, data) {
         if (err) return callback(err);
 
-        if (typeof data !== "string") {
-            callback("Bad data url. Expected string.");
-            return;
-        }
-
-        var index = data.indexOf("base64,");
-        if (index == -1) {
-            callback("Bad data url. Unable to find base64 data separator.");
-            return;
-        }
-
-        callback(null, new Buffer(data.substring(index + 7), "base64"));
+        callback(null, new Buffer(data, "base64"));
     });
 };
 
@@ -97,31 +108,19 @@ ChartRenderer.prototype.open = function (callback) {
 
     this._opening = true;
 
-    var self = this;
-
-    // check to make sure user has installed the peer dependency for Chart.js
-    fs.exists(this.chartJsPath, function (exists) {
-
-        if (!exists) {
-            callback(new Error("Could not find Chart.js at path '" + self.chartJsPath + "'. Install the peer dependency in your project " +
-                                "using `npm install chart.js --save`."));
-            return;
-        }
-
-        // create a HTTP client to connect to the server
-        self._request = restify.createStringClient({
-            url: "http://localhost:" + self.port,
-            contentType: "application/json"
-        });
-
-        // start up the PhantomJS server
-        self._startPhantom(callback);
+    // create a HTTP client to connect to the server
+    this._request = restify.createStringClient({
+        url: "http://localhost:" + this.port,
+        contentType: "application/json"
     });
+
+    // start up the PhantomJS server
+    this._startPhantom(callback);
 };
 
 ChartRenderer.prototype._startPhantom = function (callback) {
 
-    var child = childProcess.spawn(binPath, [scriptPath, this.port, this.chartJsPath]),
+    var child = childProcess.spawn(binPath, [scriptPath, this.port, chartJsPath]),
         self = this;
 
     var stdout = "";

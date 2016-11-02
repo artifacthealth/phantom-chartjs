@@ -13,16 +13,11 @@ Install using [npm](https://www.npmjs.com/):
 $ npm install phantom-chartjs --save
 ```
 
+## TypeScript
+
+TypeScript definitions are included in the package, so typings are automatically provided to TypeScript without any additional work.
 
 ## Usage
-
-#### Install Chart.js
-
-Install Chart.js as a dependency to your project using [npm](https://www.npmjs.com/). The phantom-chartjs module will use whatever version of Chart.js is installed in your project.
-
-```bash
-$ npm install chart.js --save 
-```
 
 #### Create a renderer
 
@@ -30,7 +25,7 @@ In your server, create a renderer. This starts a PhantomJS server on the default
 *The renderer should be created once and used throughout your server.*
 
 ```javascript
-var createChartRenderer = require("phantom-chartjs").createChartRenderer;
+import {createChartRenderer} from "phantom-chartjs";
 
 createChartRenderer({ port: 8080 }, (err, renderer) => {
     if (err) throw err;
@@ -97,15 +92,15 @@ renderer.renderBuffer(config, function (err, buffer) {
 });
 ```
 
-#### Render to a Data URL
+#### Render to Base 64
 
-You can also render to a [Data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) using `renderDataUrl`.
+You can also render to base 64 encoding using `renderBase64`.
 
 ```javascript
-renderer.renderDataUrl(config, function (err, dataUrl) {
+renderer.renderBase64(config, function (err, data) {
     if (err) throw err;
 
-    // the `dataUrl` now contains a data url for the rendered PNG
+    // the `data` now contains a base 64 encoding string with the rendered PNG
     ...
 });
 ```
@@ -117,8 +112,6 @@ Make sure to close the renderer when your server exits; otherwise, the PhantomJS
 ```javascript
 process.on("exit", () => {
 
-    renderer.close(() => {
-        console.log("Chart renderer is closed.");
-    });
+    renderer.close();
 });
 ```

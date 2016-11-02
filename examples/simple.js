@@ -6,7 +6,7 @@ var mkdir = require("mkdir-p");
 var outputDir = path.join(__dirname, "output");
 mkdir.sync(outputDir);
 
-createChartRenderer(null, function(err, renderer) {
+createChartRenderer({ logger: console }, function(err, renderer) {
     if (err) throw err;
 
     process.on("exit", function() {
@@ -15,6 +15,7 @@ createChartRenderer(null, function(err, renderer) {
 
     var config = {
         width: 620,
+        scale: 2,
         chart: {
             type: 'bar',
             data: {
