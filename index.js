@@ -18,7 +18,7 @@ function ChartRenderer(options) {
 
     this.logger = options.logger;
     this.port = options.port || 8083;
-    this.chartJsPath = options.chartJsPath || "../node_modules/chart.js/dist/Chart.min.js";
+    this.chartJsPath = options.chartJsPath || path.resolve(__dirname, "../node_modules/chart.js/dist/Chart.min.js");
 }
 
 inherits(ChartRenderer, EventEmitter);
