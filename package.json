@@ -1,6 +1,6 @@
 {
   "name": "phantom-chartjs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Server-side chart generation using PhantomJS and Chart.js",
   "main": "index.js",
   "scripts": {
