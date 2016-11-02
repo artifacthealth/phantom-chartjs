@@ -82,6 +82,8 @@ describe("ChartRenderer", function() {
 
     before(function(done) {
 
+        defaultOptions.port = 8084;
+
         createChartRenderer(defaultOptions, function(err, result) {
             if (err) return done(err);
 
