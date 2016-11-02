@@ -75,14 +75,12 @@ describe("createChartRenderer", function() {
     });
 });
 
-describe("ChartRenderer", function() {
+describe.only("ChartRenderer", function() {
     this.timeout(5000);
 
     var renderer;
 
     before(function(done) {
-
-        defaultOptions.port = 8084;
 
         createChartRenderer(defaultOptions, function(err, result) {
             if (err) return done(err);
