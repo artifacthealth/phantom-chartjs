@@ -8,7 +8,7 @@ var fs = require("fs");
 var async = require("async");
 
 var scriptPath = path.join(__dirname, "script.js"),
-    chartJsPath = path.resolve(path.dirname(require.resolve("chart.js")), "../dist/Chart.min.js");
+    chartJsPath = path.resolve(path.dirname(require.resolve("chart.js")), "../dist/Chart.bundle.min.js");
     binPath = phantomjs.path;
 
 function ChartRenderer(options) {
