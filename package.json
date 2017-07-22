@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "async": "2.1.2",
-    "chart.js": "2.3.0",
+    "chart.js": "2.5.0",
     "phantomjs-prebuilt": "2.1.13",
     "restify-clients": "1.4.1"
   },
