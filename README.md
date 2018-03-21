@@ -115,3 +115,9 @@ process.on("exit", () => {
     renderer.close();
 });
 ```
+
+## Plugin compatibility
+
+The following plugins are included and can be used with full functionality.
+
+ * `chart.piecelabel.js`: See its [documentation](https://github.com/emn178/Chart.PieceLabel.js) for usage information.
