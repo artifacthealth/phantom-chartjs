@@ -1,23 +1,24 @@
 {
-  "name": "phantom-chartjs",
-  "version": "0.2.3",
-  "description": "Server-side chart generation using PhantomJS and Chart.js",
+  "name": "phantom-chartjs-extended",
+  "version": "0.1.0",
+  "description": "Server-side chart generation using PhantomJS and Chart.js with integrated Chart.piecelabel.js plugin",
   "main": "index.js",
   "scripts": {
     "test": "mocha index.tests.js"
   },
   "author": {
-    "name": "Artifact Health, Inc",
-    "url": "http://www.artifacthealth.com"
+    "name": "Jordi Hereu",
+    "url": "http://www.jordiher.eu"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/artifacthealth/phantom-chartjs"
+    "url": "https://github.com/jhereu/phantom-chartjs-extended"
   },
   "license": "MIT",
   "dependencies": {
     "async": "2.1.2",
     "chart.js": "2.3.0",
+    "chart.piecelabel.js": "^0.9.0",
     "phantomjs-prebuilt": "2.1.13",
     "restify-clients": "1.4.1"
   },

@@ -8,8 +8,9 @@ var fs = require("fs");
 var async = require("async");
 
 var scriptPath = path.join(__dirname, "script.js"),
-    chartJsPath = path.resolve(path.dirname(require.resolve("chart.js")), "../dist/Chart.bundle.min.js");
-    binPath = phantomjs.path;
+        chartJsPath = path.resolve(path.dirname(require.resolve("chart.js")), "../dist/Chart.bundle.min.js"),
+        chartJsPieLabelPath = path.resolve(path.dirname(require.resolve("chart.piecelabel.js")), "../build/Chart.PieceLabel.min.js"),
+        binPath = phantomjs.path;
 
 function ChartRenderer(options) {
     EventEmitter.call(this);
@@ -24,7 +25,9 @@ function ChartRenderer(options) {
     // the PhantomJS server is single threaded and rendering (in our case) seems to happening synchronously. so let's queue up requests
     // here instead of on the server. the server seems to perform better this way and let's us keep track of any outstanding requests.
     var self = this;
-    this._queue = async.queue(function(request, done) { self._request.post("/", request, done) }, 1);
+    this._queue = async.queue(function (request, done) {
+        self._request.post("/", request, done)
+    }, 1);
 }
 
 inherits(ChartRenderer, EventEmitter);
@@ -51,8 +54,9 @@ ChartRenderer.prototype.renderBase64 = function (config, callback) {
         return callback(new Error("Unsupported image type '" + config.type + "'. Supported types are PNG, GIF, and JPEG."));
     }
 
-    this._queue.push(safeStringify(config), function(err, req, res) {
-        if (err) return callback(err);
+    this._queue.push(safeStringify(config), function (err, req, res) {
+        if (err)
+            return callback(err);
 
         callback(null, res.body);
     });
@@ -61,7 +65,8 @@ ChartRenderer.prototype.renderBase64 = function (config, callback) {
 ChartRenderer.prototype.renderBuffer = function (config, callback) {
 
     this.renderBase64(config, function (err, data) {
-        if (err) return callback(err);
+        if (err)
+            return callback(err);
 
         callback(null, new Buffer(data, "base64"));
     });
@@ -69,8 +74,8 @@ ChartRenderer.prototype.renderBuffer = function (config, callback) {
 
 ChartRenderer.prototype.close = function (callback) {
 
-    if(callback) {
-        if(this._closed) {
+    if (callback) {
+        if (this._closed) {
             callback();
             return;
         }
@@ -78,7 +83,8 @@ ChartRenderer.prototype.close = function (callback) {
         this.on("closed", callback);
     }
 
-    if (this._closing) return;
+    if (this._closing)
+        return;
     this._closing = true;
 
     this.emit("closing");
@@ -119,9 +125,8 @@ ChartRenderer.prototype.open = function (callback) {
 };
 
 ChartRenderer.prototype._startPhantom = function (callback) {
-
-    var child = childProcess.spawn(binPath, [scriptPath, this.port, chartJsPath]),
-        self = this;
+    var child = childProcess.spawn(binPath, [scriptPath, this.port, chartJsPath, chartJsPieLabelPath]),
+            self = this;
 
     var stdout = "";
 
@@ -137,8 +142,7 @@ ChartRenderer.prototype._startPhantom = function (callback) {
                 if (stdout.indexOf("listening") != -1) {
                     self._opening = false;
                     callback(null, self);
-                }
-                else if (stdout.indexOf("unable to listen") != -1) {
+                } else if (stdout.indexOf("unable to listen") != -1) {
                     self._opening = false;
                     callback(new Error("Unable to start PhantomJS server on port " + self.port));
                 }
@@ -166,7 +170,7 @@ ChartRenderer.prototype._startPhantom = function (callback) {
     this._process = child;
 };
 
-function createChartRenderer (options, callback) {
+function createChartRenderer(options, callback) {
 
     var renderer = new ChartRenderer(options);
     renderer.open(callback);
@@ -174,12 +178,12 @@ function createChartRenderer (options, callback) {
 
 function safeStringify(value) {
 
-    if (value == null) return null;
+    if (value == null)
+        return null;
 
     try {
         return JSON.stringify(value);
-    }
-    catch (e) {
+    } catch (e) {
         return null;
     }
 }

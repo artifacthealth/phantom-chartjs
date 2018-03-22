@@ -7,21 +7,24 @@ var server = require('webserver').create();
 var fs = require("fs");
 
 phantom.onError = function (msg, trace) {
-
     console.log("Unhandled error: " + createErrorMessage(msg, trace));
     phantom.exit(1);
 };
-
-if (system.args.length !== 3) {
-    console.log("Usage: script.js <portnumber> <path-to-chartjs>");
+if (system.args.length !== 4) {
+    console.log("Usage: script.js <portnumber> <path-to-chartjs> <path-to-chart.piecelabel.js>");
     phantom.exit(1);
 }
-
 var port = system.args[1],
-    chartJsPath = system.args[2];
+        chartJsPath = system.args[2],
+        chartJsPieLabelPath = system.args[3]
 
 if (!fs.exists(chartJsPath)) {
     console.log("PhantomJS server could not find Chart.js at path '" + chartJsPath + "'.");
+    phantom.exit(1);
+}
+
+if (!fs.exists(chartJsPieLabelPath)) {
+    console.log("PhantomJS server could not find Chart.PieceLabel.js at path '" + chartJsPieLabelPath + "'.");
     phantom.exit(1);
 }
 
@@ -29,8 +32,7 @@ var listening = server.listen(port, handleRequest);
 if (!listening) {
     console.log("PhantomJS server unable to listen on port " + port + ". Exiting.");
     phantom.exit(1);
-}
-else {
+} else {
     console.log("PhantomJS server listening on port " + port);
 }
 
@@ -80,8 +82,7 @@ function render(configText, callback) {
     // parse json
     try {
         var config = JSON.parse(configText);
-    }
-    catch (e) {
+    } catch (e) {
         callback("Unable to parse chart configuration: " + e.message);
         return;
     }
@@ -111,7 +112,7 @@ function render(configText, callback) {
     var scale = config.scale || 1;
 
     var page = webpage.create(),
-        called = false;
+            called = false;
 
     page.onError = function (msg, trace) {
 
@@ -123,6 +124,7 @@ function render(configText, callback) {
 
     // Chart.js must be installed as a peer dependency.
     page.injectJs(chartJsPath);
+    page.injectJs(chartJsPieLabelPath);
 
     // set the viewport size to define the render area
     page.viewportSize = {
@@ -151,15 +153,14 @@ function renderPage(chart, width, height, scale) {
     if (scale == 1) {
         canvas.setAttribute("width", width);
         canvas.setAttribute("height", height);
-    }
-    else {
+    } else {
         canvas.setAttribute("width", width * scale);
         canvas.setAttribute("height", height * scale);
         canvas.getContext("2d").setTransform(scale, 0, 0, scale, 0, 0);
 
         // monkey patch the Chart Controller to reset the calculated height and width so chart renders correctly on the scaled canvas.
         var _super = Chart.Controller.prototype.initialize;
-        Chart.Controller.prototype.initialize = function() {
+        Chart.Controller.prototype.initialize = function () {
 
             this.chart.width = width;
             this.chart.height = height;
