@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/artifacthealth/phantom-chartjs.svg?branch=master)](https://travis-ci.org/artifacthealth/phantom-chartjs)
-
 # phantom-chartjs-extended
 
 This is a fork of `phantom-chartjs` module by [artifacthealth](https://github.com/artifacthealth) just with hard-coded integration of `Chart.piecelabel.js` module.
