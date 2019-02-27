@@ -3,7 +3,7 @@
 # phantom-chartjs
 
 phantom-chartjs is a CommonJS module for rendering [Chart.js](https://www.chartjs.org/) charts to images on the server. Rendering is accomplished using PhantomJS. In order 
-to keep response times low, PhantomJS is spanwed as a server process.
+to keep response times low, PhantomJS is spawned as a server process.
 
 ## Installation
 
