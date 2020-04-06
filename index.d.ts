@@ -1,6 +1,8 @@
+import {EventEmitter} from "events";
+
 export declare function createChartRenderer(options: ChartRendererOptions, callback: (err?: Error, result?: ChartRenderer) => void): void;
 
-export interface ChartRenderer {
+export interface ChartRenderer extends EventEmitter {
 
     renderBase64(config: ChartRenderConfiguration, callback: (err?: Error, result?: string) => void);
     renderBuffer(config: ChartRenderConfiguration, callback: (err?: Error, result?: Buffer) => void);
