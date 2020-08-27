@@ -242,7 +242,7 @@ export interface ChartDefaults {
 
     global: GlobalSettings;
     bar: BarChartSettings;
-    horizontalBar: BarChartSettings;
+    horizontalBar: HorizontalBarChartConfiguration;
     line: LineChartSettings;
     radar: RadarChartSettings;
     polarArea: PolarAreaChartSettings;
@@ -638,8 +638,8 @@ export interface ChartData<DataSetT> {
     yLabels?: string[];
 }
 
-type ChartConfiguration  = LineChartConfiguration | BarChartConfiguration | RadarChartConfiguration | PolarAreaChartConfiguration
-    | PieChartConfiguration | BubbleChartConfiguration;
+type ChartConfiguration  = LineChartConfiguration | BarChartConfiguration | HorizontalBarChartConfiguration
+    | RadarChartConfiguration | PolarAreaChartConfiguration | PieChartConfiguration | BubbleChartConfiguration;
 
 export interface LineChartConfiguration {
 
@@ -688,9 +688,16 @@ export interface LineChartSettings extends CommonChartSettings {
 
 export interface BarChartConfiguration {
 
-    type: "bar" | "horizontalBar";
+    type: "bar";
     data: ChartData<BarChartDataSet>;
     options?: BarChartSettings;
+}
+
+export interface HorizontalBarChartConfiguration {
+
+    type: "horizontalBar";
+    data: ChartData<BarChartDataSet>;
+    options?: HorizontalBarChartSettings;
 }
 
 export interface BarChartDataSet {
@@ -711,6 +718,11 @@ export interface BarChartDataSet {
 export interface BarChartSettings extends CommonChartSettings {
 
     scales?: ScalesConfiguration<CategoryScaleConfiguration, ScaleConfiguration>;
+}
+
+export interface HorizontalBarChartSettings extends CommonChartSettings {
+
+    scales?: ScalesConfiguration<ScaleConfiguration, CategoryScaleConfiguration>;
 }
 
 export interface RadarChartConfiguration {
