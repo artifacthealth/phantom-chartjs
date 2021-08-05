@@ -1,6 +1,6 @@
 {
   "name": "phantom-chartjs",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Server-side chart generation using PhantomJS and Chart.js",
   "main": "index.js",
   "scripts": {
@@ -17,8 +17,8 @@
   "license": "MIT",
   "dependencies": {
     "async": "2.1.2",
-    "chart.js": "2.3.0",
-    "phantomjs-prebuilt": "2.1.13",
+    "chart.js": "2.9.4",
+    "phantomjs-prebuilt": "2.1.15",
     "restify-clients": "2.6.6"
   },
   "devDependencies": {

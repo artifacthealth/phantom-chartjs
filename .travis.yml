@@ -1,4 +1,4 @@
 language: node_js
 node_js:
-  - "6.9.1"
+  - "14.17.3"
 before_install: npm install -g mocha
