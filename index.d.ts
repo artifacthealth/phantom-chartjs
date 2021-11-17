@@ -538,6 +538,7 @@ export interface LinearTickConfiguration extends TickConfiguration {
     maxTicksLimit?: number;
     fixedStepSize?: number;
     stepSize?: number;
+    precision?: number;
     suggestedMax?: number;
     suggestedMin?: number;
 }
