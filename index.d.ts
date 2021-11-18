@@ -540,6 +540,7 @@ export interface LinearTickConfiguration extends TickConfiguration {
     stepSize?: number;
     suggestedMax?: number;
     suggestedMin?: number;
+    precision?: number;
 }
 
 export interface LogarithmicScaleConfiguration extends CommonScaleConfiguration {
