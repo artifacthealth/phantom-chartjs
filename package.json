@@ -1,10 +1,10 @@
 {
   "name": "phantom-chartjs",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "Server-side chart generation using PhantomJS and Chart.js",
-  "main": "index.js",
   "scripts": {
-    "test": "mocha index.tests.js"
+    "test": "mocha index.tests.js",
+    "start": "node server.js"
   },
   "author": {
     "name": "Artifact Health, Inc",

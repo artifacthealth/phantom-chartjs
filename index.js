@@ -8,7 +8,7 @@ var fs = require("fs");
 var async = require("async");
 
 var scriptPath = path.join(__dirname, "script.js"),
-    chartJsPath = path.resolve(path.dirname(require.resolve("chart.js")), "../dist/Chart.bundle.min.js");
+    chartJsPath = path.resolve(path.dirname(require.resolve("chart.js")), "../dist/Chart.bundle.min.js"),
     binPath = phantomjs.path;
 
 function ChartRenderer(options) {
@@ -19,6 +19,7 @@ function ChartRenderer(options) {
     }
 
     this.logger = options.logger;
+    this.url = options.url;
     this.port = options.port || 8083;
 
     // the PhantomJS server is single threaded and rendering (in our case) seems to happening synchronously. so let's queue up requests
@@ -110,11 +111,16 @@ ChartRenderer.prototype.open = function (callback) {
 
     // create a HTTP client to connect to the server
     this._request = restify.createStringClient({
-        url: "http://localhost:" + this.port,
+        url: this.url || ("http://localhost:" + this.port),
         contentType: "application/json"
     });
 
-    // start up the PhantomJS server
+    // start up the PhantomJS server if url is not specified
+    if (this.url) {
+        callback(null, this);
+        return;
+    }
+
     this._startPhantom(callback);
 };
 

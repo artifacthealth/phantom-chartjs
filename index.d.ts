@@ -51,6 +51,12 @@ export interface ChartRendererOptions {
      * A logger that conforms to the [bunyan](https://www.npmjs.com/package/bunyan) logger export interface.
      */
     logger?: Logger;
+
+    /**
+     * The URL of the PhantomJS server. If specified then the library assumes the server is already running and
+     * a server is not spawned.
+     */
+    url?: string;
 }
 
 /**
