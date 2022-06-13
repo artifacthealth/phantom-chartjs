@@ -5,6 +5,7 @@ var system = require("system");
 var webpage = require("webpage");
 var server = require('webserver').create();
 var fs = require("fs");
+var config = require("./package.json");
 
 phantom.onError = function (msg, trace) {
 
@@ -35,6 +36,17 @@ else {
 }
 
 function handleRequest(request, response) {
+
+    if (request.method == "GET" && request.url == "/version") {
+        response.statusCode = 200;
+        response.headers = {
+            "Cache": "no-cache",
+            "Content-Type": "application/json"
+        };
+        response.write(JSON.stringify({ version: config.version }));
+        response.closeGracefully();
+        return;
+    }
 
     if (request.method != "POST") {
 
